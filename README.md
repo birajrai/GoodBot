@@ -22,7 +22,7 @@ https://discord.gg/b2w8mPQjYG
 
 
 
-**config.json**
+`**config.json**
 
 
  {
