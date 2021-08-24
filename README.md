@@ -31,7 +31,7 @@ https://discord.gg/b2w8mPQjYG
 
 "prefix": "[ PREFIX ]"   // add your bot prefix
 
-}
+}`
 
 
 
