@@ -1,55 +1,64 @@
-const Discord = require("discord.js")
+const { MessageEmbed } = require('discord.js');
+
 module.exports = {
-  name: "delword",
-  run: async (client, message, args, db) => {
-    if (!message.channel.permissionsFor(message.author).has("MANAGE_GUILD")) return message.channel.send(":x: | **You dont have permissions to use this Command!**");
-    let pog = db.get(`words_${message.guild.id}`)
-    let word = args[0]
-    if (!word) {
-      let embed = new Discord.MessageEmbed()
-        .setTitle("Error")
-        .setDescription(`:x: | **No word provided**\nFormat: \`+delword fk\``)
-        .setFooter(message.author.tag + "", message.author.displayAvatarURL())
-        .setThumbnail(message.guild.iconURL())
-        .setColor("#FF0000")
-      return message.channel.send({
-        embed: embed
-      })
-    }
-    if (pog) {
-      let data = pog.find((x) => x.word.toLowerCase() === word.toLowerCase());
-      let No = new Discord.MessageEmbed()
-      No.setAuthor(message.author.tag, message.author.displayAvatarURL({ dynamic: true }))
-      No.setDescription(`:x: | **Word Not Found**`)
-      No.setColor("#FF0000")
-      No.setFooter(message.guild.name + "", message.guild.iconURL());
-      No.setThumbnail(message.guild.iconURL())
+    name: 'delword',
+    run: async (client, message, args, db) => {
+        if (!message.channel.permissionsFor(message.author).has('MANAGE_GUILD')) {
+            return message.channel.send(':x: | **You dont have permissions to use this Command!**');
+        }
 
-      if (!data) return message.channel.send({ embed: No });
+        let pog = db.get(`words_${message.guild.id}`);
+        let word = args[0];
 
-      let yes = pog.indexOf(data);
-      delete pog[yes];
+        if (!word) {
+            let embed = new MessageEmbed()
+                .setTitle('Error')
+                .setDescription(`:x: | **No word provided**\nFormat: \`+delword fk\``)
+                .setFooter(message.author.tag, message.author.displayAvatarURL())
+                .setThumbnail(message.guild.iconURL())
+                .setColor('#FF0000');
 
-      var filter = pog.filter((x) => {
-        return x != null && x != '';
-      });
-      db.set(`words_${message.guild.id}`, filter);
-      let embed = new Discord.MessageEmbed()
-      embed.setAuthor(message.author.tag, message.author.displayAvatarURL())
-      embed.setDescription(`**The word has been deleted!** `)
-      embed.setFooter(message.guild.name + "", message.guild.iconURL());
-      embed.setColor("GREEN")
-      embed.setTimestamp()
-      return message.channel.send({ embed: embed });
-    } else {
-      let embed = new Discord.MessageEmbed()
-      embed.setAuthor(message.author.tag, message.author.displayAvatarURL())
-      embed.setDescription(`:x: | **The word was not found!**`)
-      embed.setFooter(message.guild.name + "", message.guild.iconURL());
-      embed.setColor("#FF0000")
-      embed.setTimestamp()
+            return message.channel.send({ embeds: [embed] });
+        }
 
-      return message.channel.send({ embed: embed });
-    }
-  }
-}
+        if (pog) {
+            let data = pog.find(x => x.word.toLowerCase() === word.toLowerCase());
+
+            let No = new MessageEmbed()
+                .setAuthor(message.author.tag, message.author.displayAvatarURL({ dynamic: true }))
+                .setDescription(':x: | **Word Not Found**')
+                .setColor('#FF0000')
+                .setFooter(message.guild.name, message.guild.iconURL())
+                .setThumbnail(message.guild.iconURL());
+
+            if (!data) return message.channel.send({ embeds: [No] });
+
+            let yes = pog.indexOf(data);
+            delete pog[yes];
+
+            var filter = pog.filter(x => {
+                return x != null && x != '';
+            });
+
+            db.set(`words_${message.guild.id}`, filter);
+
+            let embed = new MessageEmbed()
+                .setAuthor(message.author.tag, message.author.displayAvatarURL())
+                .setDescription('**The word has been deleted!**')
+                .setFooter(message.guild.name, message.guild.iconURL())
+                .setColor('GREEN')
+                .setTimestamp();
+
+            return message.channel.send({ embeds: [embed] });
+        } else {
+            let embed = new MessageEmbed()
+                .setAuthor(message.author.tag, message.author.displayAvatarURL())
+                .setDescription(':x: | **The word was not found!**')
+                .setFooter(message.guild.name, message.guild.iconURL())
+                .setColor('#FF0000')
+                .setTimestamp();
+
+            return message.channel.send({ embeds: [embed] });
+        }
+    },
+};

@@ -1,19 +1,22 @@
-const { readdirSync } = require("fs");
+const { readdirSync } = require('fs');
+const path = require('path');
 
-module.exports = (client) => {
-    readdirSync("./commands/").forEach(dir => {
-        const commands = readdirSync(`./commands/${dir}/`).filter(file => file.endsWith(".js"));
-        for (let file of commands) {
-            let pull = require(`../commands/${dir}/${file}`);
-    
-            if (pull.name) {
-                client.commands.set(pull.name, pull);
-            } else {
-                continue;
-            }
-    
-            if (pull.aliases && Array.isArray(pull.aliases)) pull.aliases.forEach(alias => client.aliases.set(alias, pull.name));
+module.exports = client => {
+    const commandFiles = readdirSync(path.join(__dirname, '..', 'commands')).filter(file => file.endsWith('.js'));
+
+    for (const file of commandFiles) {
+        const command = require(path.join(__dirname, '..', 'commands', file));
+
+        if (command.name) {
+            client.commands.set(command.name, command);
         }
-    });
-    console.log("[INFO]: Commands Loaded!")
-}
+
+        if (command.aliases && Array.isArray(command.aliases)) {
+            command.aliases.forEach(alias => {
+                client.aliases.set(alias, command.name);
+            });
+        }
+    }
+
+    console.log('[INFO]: Commands Loaded!');
+};
